@@ -1,15 +1,28 @@
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addContact } from '../../redux/operations';
+import { selectContacts } from '../../redux/selectors';
 import { Button, Form, FormInput } from './ContactForm.styled';
 
 export const ContactForm = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const dispatch = useDispatch();
+  const contacts = useSelector(selectContacts);
 
   const handleSubmit = event => {
     event.preventDefault();
+
+    const isExistingContact = contacts.some(
+      contact => contact.name.toLowerCase() === name.toLowerCase()
+    );
+
+    if (isExistingContact) {
+      alert(`${name} вже є в контактах.`);
+      setName('');
+      setPhone('');
+      return;
+    }
 
     dispatch(addContact({ name, phone }));
     setName('');

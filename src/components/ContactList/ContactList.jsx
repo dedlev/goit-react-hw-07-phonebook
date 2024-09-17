@@ -1,12 +1,18 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
-import { selectContacts, selectFilter } from '../../redux/selectors';
+import {
+  selectContacts,
+  selectFilter,
+  selectIsLoading,
+} from '../../redux/selectors';
 import { deleteContact, fetchContacts } from '../../redux/operations';
 import { ContactListItem } from '../ContactListItem/ContactListItem';
+import { Spinner } from 'utils/Spinner';
 
 export const ContactList = () => {
   const contacts = useSelector(selectContacts);
   const filter = useSelector(selectFilter);
+  const isLoading = useSelector(selectIsLoading);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -26,14 +32,19 @@ export const ContactList = () => {
   const filteredContacts = getFilteredContacts();
 
   return (
-    <ul>
-      {filteredContacts.map(contact => (
-        <ContactListItem
-          key={contact.id}
-          contact={contact}
-          onDelete={handleDelete}
-        />
-      ))}
-    </ul>
+    <div>
+      {isLoading && <Spinner />}
+      {!isLoading && (
+        <ul>
+          {filteredContacts.map(contact => (
+            <ContactListItem
+              key={contact.id}
+              contact={contact}
+              onDelete={handleDelete}
+            />
+          ))}
+        </ul>
+      )}
+    </div>
   );
 };
